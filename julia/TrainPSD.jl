@@ -4,6 +4,7 @@ using SparseArrays: sparse
 
 const evts_per_type = 1000000 #maximum number of events per particle type
 const test_evts = 10000 #number of testing events per type
+const nsamp = 150 #number of samples used
 
 function fillDataArrays(x::Array{UInt16,2},y::Array{UInt8,1},indirs,filelist,n_evts_per_type::Int64,excludeflist=[])
     evtcounter = 0
@@ -45,7 +46,6 @@ function readDir(inputdir::String,train_x::Array{UInt16,2},n::Int64,fs,maxevts::
 end
 
 function readHDF(fname::String,dmx::Array{UInt16,2},offset,maxevts)
-    nsamp = 150
     nevents = 0
     c = h5open(fname, "r") do fid
         data = read(fid,"Waveforms")
@@ -71,15 +71,7 @@ function readHDF(fname::String,dmx::Array{UInt16,2},offset,maxevts)
     return nevents
 end
 
-function main()
-    train_filelist =[] #files used for training
-    test_filelist = [] #files used for testing
-    if size(ARGS,1) < 2
-        println("usage: julia TrainPSD.jl [<input directory1>, <input directory2>, ...]")
-        exit(500)
-    end
-
-    indirs = ARGS #input directories
+function getName(indirs)
     modelname = ""
     i = 0
     for d in indirs
@@ -94,9 +86,21 @@ function main()
         end
         i+=1
     end
+    return modelname
+end
+
+function main()
+    train_filelist =[] #files used for training
+    test_filelist = [] #files used for testing
+    if size(ARGS,1) < 2
+        println("usage: julia TrainPSD.jl [<input directory1>, <input directory2>, ...]")
+        exit(500)
+    end
+
+    indirs = ARGS #input directories
+    modelname = getName(indirs)
 
     ndet = 14*11*2
-    nsamp = 150
     ntype = length(indirs)
 
     train_x = zeros(UInt16, (evts_per_type*ntype,ndet*nsamp))
