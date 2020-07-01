@@ -9,13 +9,17 @@ const nsamp = 150
 function getPrediction(bst::Booster,test_x::Array{UInt16,2},test_y::Array{UInt8,1})
     sptest = sparse(test_x)
     preds = predict(bst, sptest)
-    print("test-error=", sum((preds .> 0.5) .!= test_y) / float(size(preds)[1]), "\n")
+    err = sum((preds .> 0.5) .!= test_y) / float(size(preds)[1])
+    print("test-error=", err, "\n")
+    return err
 end
 
 function testData(dirs,ntest,ndim,bst)
     i = 0
     y = zeros(UInt8,ntest)
     x = zeros(UInt16,ntest,ndim)
+    errsum = 0.0
+    ntests = 0
     for inputdir in dirs
         if(i > 0)
             j = 1
@@ -37,7 +41,8 @@ function testData(dirs,ntest,ndim,bst)
                                 curevt = i.evt
                                 nevents += 1
                                 if nevents > ntest
-                                    getPrediction(bst,x,y)
+                                    errsum += getPrediction(bst,x,y)
+                                    ntests += 1
                                     nevents = 1
                                     x = zeros(UInt16,ntest,ndim)
                                 end
@@ -53,14 +58,19 @@ function testData(dirs,ntest,ndim,bst)
             end
         end
         if nevents < nsamp
-            getPrediction(bst,x[1:nevents,:],y[1:nevents])
+            errsum += getPrediction(bst,x[1:nevents,:],y[1:nevents])
+            ntests += 1
             x = zeros(UInt16,ntest,ndim)
         else
-            getPrediction(bst,x,y)
+            errsum += getPrediction(bst,x,y)
+            ntests += 1
             x = zeros(UInt16,ntest,ndim)
         end
         i+=1
     end
+    finalerror = errsum/ntests
+    print("Overall error: ",finalerror,"\n")
+    return finalerror
 end
 
 
@@ -77,8 +87,7 @@ function main()
     modelname = getName(indirs)
     bst = Booster(model_file = string(modelname,".model"))
     #predict
-    testData(indirs,nTest,ndim,bst)
-
+    err = testData(indirs,nTest,ndim,bst)
 end
 
 
