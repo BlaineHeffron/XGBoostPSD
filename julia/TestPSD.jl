@@ -21,12 +21,8 @@ function testData(dirs,ntest,ndim,bst)
     errsum = 0.0
     ntests = 0
     for inputdir in dirs
-        if(i > 0)
-            j = 1
-            while j <= ntest
-                y[j] = i
-                j+=1
-            end
+        if i > 0
+            fill!(y,i)
         end
         nevents = 0
         for (root, dirs, files) in walkdir(inputdir)
