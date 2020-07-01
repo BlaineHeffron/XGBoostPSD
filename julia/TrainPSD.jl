@@ -2,10 +2,8 @@ using HDF5;
 using XGBoost;
 using SparseArrays: sparse
 
-evts_per_type = 1000000 #maximum number of events per particle type
-test_evts = 10000 #number of testing events per type
-train_filelist =[] #files used for training
-test_filelist = [] #files used for testing
+const evts_per_type = 1000000 #maximum number of events per particle type
+const test_evts = 10000 #number of testing events per type
 
 function fillDataArrays(x::Array{UInt16,2},y::Array{UInt8,1},indirs,filelist,n_evts_per_type::Int64,excludeflist=[])
     evtcounter = 0
@@ -74,6 +72,8 @@ function readHDF(fname::String,dmx::Array{UInt16,2},offset,maxevts)
 end
 
 function main()
+    train_filelist =[] #files used for training
+    test_filelist = [] #files used for testing
     if size(ARGS,1) < 2
         println("usage: julia TrainPSD.jl [<input directory1>, <input directory2>, ...]")
         exit(500)
