@@ -44,7 +44,7 @@ function testData(dirs,ntest,ndim,bst)
                                     errsum += getPrediction(bst,x,y)
                                     ntests += 1
                                     nevents = 1
-                                    x = zeros(UInt16,ntest,ndim)
+                                    fill!(x, 0)
                                 end
                             end
                             n = 1
@@ -60,11 +60,11 @@ function testData(dirs,ntest,ndim,bst)
         if nevents < nsamp
             errsum += getPrediction(bst,x[1:nevents,:],y[1:nevents])
             ntests += 1
-            x = zeros(UInt16,ntest,ndim)
+            fill!(x, 0)
         else
             errsum += getPrediction(bst,x,y)
             ntests += 1
-            x = zeros(UInt16,ntest,ndim)
+            fill!(x, 0)
         end
         i+=1
     end
