@@ -2,7 +2,7 @@ using HDF5;
 using XGBoost;
 using SparseArrays: sparse
 
-include("TrainPSD.jl")
+include("CommonFunctions.jl")
 const nsamp = 150
 
 
@@ -77,3 +77,6 @@ function main()
     testData(indirs,nTest,ndim,bst)
 
 end
+
+
+@time main()

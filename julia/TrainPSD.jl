@@ -5,6 +5,7 @@ using SparseArrays: sparse
 const evts_per_type = 1000000 #maximum number of events per particle type
 const test_evts = 10000 #number of testing events per type
 const nsamp = 150 #number of samples used
+include("CommonFunctions.jl")
 
 function fillDataArrays(x::Array{UInt16,2},y::Array{UInt8,1},indirs,filelist,n_evts_per_type::Int64,excludeflist=[])
     evtcounter = 0
@@ -69,24 +70,6 @@ function readHDF(fname::String,dmx::Array{UInt16,2},offset,maxevts)
         end
     end
     return nevents
-end
-
-function getName(indirs)
-    modelname = ""
-    i = 0
-    for d in indirs
-        if !isdir(d)
-            error("Error: argument " + d + " is not a directory")
-        else
-            if i > 0
-                modelname = string(modelname,"_" , last(splitdir(d)))
-            else
-                modelname = string(modelname, last(splitdir(d)))
-            end
-        end
-        i+=1
-    end
-    return modelname
 end
 
 function main()
