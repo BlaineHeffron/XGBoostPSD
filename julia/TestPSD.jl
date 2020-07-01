@@ -6,7 +6,7 @@ include("CommonFunctions.jl")
 const nsamp = 150
 
 
-function predict(bst::Booster,test_x::Array{UInt16,2},test_y::Array{UInt8,1})
+function getPrediction(bst::Booster,test_x::Array{UInt16,2},test_y::Array{UInt8,1})
     sptest = sparse(test_x)
     preds = predict(bst, sptest)
     print("test-error=", sum((preds .> 0.5) .!= test_y) / float(size(preds)[1]), "\n")
@@ -37,7 +37,7 @@ function testData(dirs,ntest,ndim,bst)
                                 curevt = i.evt
                                 nevents += 1
                                 if nevents > ntest
-                                    predict(bst,x,y)
+                                    getPrediction(bst,x,y)
                                     nevents = 1
                                     x = zeros(UInt16,ntest,ndim)
                                 end
@@ -53,10 +53,10 @@ function testData(dirs,ntest,ndim,bst)
             end
         end
         if nevents < nsamp
-            predict(bst,x[1:nevents,:],y[1:nevents])
+            getPrediction(bst,x[1:nevents,:],y[1:nevents])
             x = zeros(UInt16,ntest,ndim)
         else
-            predict(bst,x,y)
+            getPrediction(bst,x,y)
             x = zeros(UInt16,ntest,ndim)
         end
         i+=1
