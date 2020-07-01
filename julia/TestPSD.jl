@@ -39,11 +39,12 @@ function testData(dirs,ntest,ndim,bst)
                                 if nevents > ntest
                                     predict(bst,x,y)
                                     nevents = 1
+                                    x = zeros(ntest,ndim)
                                 end
                             end
                             n = 1
-                            for x in i.waveform
-                                dmx[nevents,i.det*nsamp+n] = x
+                            for val in i.waveform
+                                x[nevents,i.det*nsamp+n] = val
                                 n+=1
                             end
                         end
@@ -53,10 +54,12 @@ function testData(dirs,ntest,ndim,bst)
         end
         if nevents < nsamp
             predict(bst,x[1:nevents,:],y[1:nevents])
+            x = zeros(ntest,ndim)
         else
             predict(bst,x,y)
+            x = zeros(ntest,ndim)
         end
-        i++
+        i+=1
     end
 end
 
