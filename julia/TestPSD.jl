@@ -21,7 +21,7 @@ function testData(dirs,ntest,ndim,bst)
             j = 1
             while j <= ntest
                 y[j] = i
-                j++
+                j+=1
             end
         end
         nevents = 0
